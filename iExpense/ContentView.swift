@@ -14,21 +14,35 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(expenses.items) { item in
-                    HStack {
-                        VStack(alignment: .leading) {
+                Section(header: Text("Personal")){
+                    ForEach(expenses.personalItems) { item in
+                        HStack {
                             Text(item.name)
                                 .font(.headline)
-                            Text(item.type)
+                            
+                            Spacer()
+                            
+                            Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         }
-                        
-                        Spacer()
-                        
-                        Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .listRowBackground(priceColors(amount: item.amount))
                     }
-                    .listRowBackground(priceColors(amount: item.amount))
+                    .onDelete(perform: removePersonalItems)
                 }
-                .onDelete(perform: removeItems)
+                
+                Section(header: Text("Business")){
+                    ForEach(expenses.businessItems) { item in
+                        HStack {
+                            Text(item.name)
+                                .font(.headline)
+                            
+                            Spacer()
+                            
+                            Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        }
+                        .listRowBackground(priceColors(amount: item.amount))
+                    }
+                    .onDelete(perform: removeBusinessItems)
+                }
             }
             .navigationTitle("iExpense")
             .toolbar {
@@ -44,14 +58,18 @@ struct ContentView: View {
         }
     }
     
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    func removePersonalItems(at offsets: IndexSet) {
+        expenses.personalItems.remove(atOffsets: offsets)
+    }
+    
+    func removeBusinessItems(at offsets: IndexSet) {
+        expenses.businessItems.remove(atOffsets: offsets)
     }
     
     func priceColors(amount: Double) -> Color {
         if amount >= 100 {
             return .red
-        } else if amount >= 11 {
+        } else if amount > 10 {
             return .yellow
         } else {
             return .green
