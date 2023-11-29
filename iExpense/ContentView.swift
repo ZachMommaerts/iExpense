@@ -40,6 +40,9 @@ struct ContentView: View {
                             Text(item.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         }
                         .listRowBackground(priceColors(amount: item.amount))
+                        .accessibilityElement()
+                        .accessibilityLabel("Item: \(item.name), Price: \(item.amount)")
+                        .accessibilityHint("Type: \(item.type)")
                     }
                     .onDelete(perform: removeBusinessItems)
                 }
